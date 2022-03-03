@@ -1,30 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import Dropzone from "react-dropzone";
 import axios from "axios";
 import { Icon } from "antd";
 
 function FileUpload() {
+  const [Images, setImages] = useState([]);
+
   const dropHandler = (files) => {
     let formData = new FormData();
 
     const config = {
-      header: { "contemt-type": "multipart/fomr-data" },
+      header: { "content-type": "multipart/fomr-data" },
     };
 
     formData.append("file", files[0]);
 
-    axios.post("/api/product/image", formData, config).then((res) => {
-      if (res.data.success) {
-        console.log("파일업로드", res.data);
-      } else {
-        alert("파일저장에 실패했습니다.");
-      }
-    });
+    axios
+      .post("http://localhost:5000/api/product/image", formData, config)
+      .then((res) => {
+        if (res.data.success) {
+          console.log("파일업로드", res.data);
+          setImages([...Images, res.data.filePath]);
+        } else {
+          alert("파일저장에 실패했습니다.");
+        }
+      });
   };
 
   return (
     <div style={{ display: "flex", justifyContent: "space-between" }}>
-      <Dropzone onDrop={(acceptedFiles) => console.log(acceptedFiles)}>
+      <Dropzone onDrop={dropHandler}>
         {({ getRootProps, getInputProps }) => (
           <section>
             <div
@@ -44,6 +49,24 @@ function FileUpload() {
           </section>
         )}
       </Dropzone>
+
+      <div
+        style={{
+          display: "flex",
+          width: "350px",
+          height: "240px",
+          overflowX: "scroll",
+        }}
+      >
+        {Images.map((image, index) => (
+          <div key={index}>
+            <img
+              style={{ minWidth: "300px", width: "300px", height: "240px" }}
+              src={`http://localhost:5000/${image}`}
+            ></img>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

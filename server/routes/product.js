@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: function (req, file, cb) {
-    cb(null, `${Date.now()}_${file.originalname}}`);
+    cb(null, `${Date.now()}_${file.originalname}`);
   },
 });
 
@@ -19,7 +19,7 @@ const upload = multer({ storage: storage }).single("file");
 
 router.post("/image", (req, res) => {
   //가져온 이미지 저장
-  upload((req, res, err) => {
+  upload(req, res, (err) => {
     if (err) {
       return req.json({ success: false, err });
     }
