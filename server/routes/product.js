@@ -40,4 +40,15 @@ router.post("/", (req, res) => {
   });
 });
 
+router.post("/products", (req, res) => {
+  //products collection에 들어 있는 모든 상품 가져오기
+  Product.find()
+    .populate("writer")
+    .exec((err, productInfo) => {
+      console.log(err);
+      if (err) return res.status(400).json({ success: false, err });
+      return res.status(200).json({ success: true, productInfo });
+    });
+});
+
 module.exports = router;

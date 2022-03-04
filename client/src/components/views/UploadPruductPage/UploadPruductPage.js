@@ -44,7 +44,8 @@ function UploadPruductPage(props) {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    if (!Title || !Category || !Description || Price || Image) {
+    console.log(Title, Category, Description, Price, Image);
+    if (!Title || !Category || !Description || !Price || !Image) {
       return alert("모든 값을 넣어주세요.");
     }
 
