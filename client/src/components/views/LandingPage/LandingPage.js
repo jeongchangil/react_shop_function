@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaCode } from "react-icons/fa";
+import { FaCode, FaHandHolding } from "react-icons/fa";
 import { Icon, Col, Card, Row, Carousel } from "antd";
 import Meta from "antd/lib/card/Meta";
 import ImageSlider from "../../utils/ImageSlider";
+import CheckBox from "./Sections/CheckBox";
+import { category } from "./Sections/Data";
 
 function LandingPage() {
   const [Product, setProduct] = useState([]);
   const [Skip, setSkip] = useState(0);
   const [Limit, setLimit] = useState(8);
   const [PostSize, setPostSize] = useState();
-
+  const [Filters, setFilters] = useState({
+    category: [],
+    price: [],
+  });
   useEffect(() => {
     let body = {
       skip: Skip,
@@ -24,7 +29,11 @@ function LandingPage() {
     axios.post("/api/product/products", body).then((res) => {
       if (res.data.success) {
         console.log("main productList : ", res.data.productInfo);
-        setProduct([...Product, ...res.data.productInfo]);
+        if (res.data.loadMore) {
+          setProduct([...Product, ...res.data.productInfo]);
+        } else {
+          setProduct(res.data.productInfo);
+        }
         setPostSize(res.data.postSize);
       } else {
         alert("상품을 가져오는데 실패 했습니다.");
@@ -53,6 +62,22 @@ function LandingPage() {
     );
   });
 
+  const showFilteredResults = (filters) => {
+    let body = {
+      skip: 0,
+      limit: Limit,
+      filters,
+    };
+    getProducts(body);
+    setSkip(0);
+  };
+
+  const handleFilters = (filters, category) => {
+    const newFilters = { ...Filters };
+    newFilters[category] = filters;
+    showFilteredResults(newFilters);
+  };
+
   return (
     <div
       style={{
@@ -66,6 +91,14 @@ function LandingPage() {
         <h2>상품 리스트</h2>
       </div>
       {/* {Filter} */}
+
+      {/* {CheckBox} */}
+      <CheckBox
+        list={category}
+        hadleFilters={(filters) => handleFilters(filters, "category")}
+      />
+      {/* {RadioBox} */}
+
       {/* {Search} */}
       {/* {Card} */}
       <Row gutter={[16, 16]}>{renderCards}</Row>

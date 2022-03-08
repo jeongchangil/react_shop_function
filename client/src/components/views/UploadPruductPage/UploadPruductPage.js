@@ -14,6 +14,7 @@ function UploadPruductPage(props) {
   const [Image, setImage] = useState([]);
 
   const selectItem = [
+    { id: 0, value: "없음" },
     { id: 1, value: "카테고리 1" },
     { id: 2, value: "카테고리 2" },
     { id: 3, value: "카테고리 3" },
@@ -55,10 +56,11 @@ function UploadPruductPage(props) {
       description: Description,
       price: Price,
       images: Image,
-      continents: Category,
+      category: Category,
     };
 
     Axios.post("/api/product", body).then((res) => {
+      console.log(Category);
       if (res.data.success) {
         alert("상품등록에 성공했습니다.");
         props.history.push("/");
@@ -93,11 +95,21 @@ function UploadPruductPage(props) {
 
         <br />
         <br />
-        <select onChange={selectChangeHandler} value={Category}>
-          {selectItem.map((item) => (
-            <option key={item.id}>{item.value}</option>
-          ))}
-        </select>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <label>카테고리</label>
+          <select
+            style={{ width: "20%", minWidth: "100px" }}
+            onChange={selectChangeHandler}
+            value={Category}
+          >
+            {selectItem.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.value}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <br />
         <br />
         <Button onClick={submitHandler}>확인</Button>
