@@ -46,9 +46,19 @@ router.post("/products", (req, res) => {
   let limit = req.body.limit ? parseInt(req.body.limit) : 20;
   let skip = req.body.skip ? parseInt(req.body.skip) : 0;
   let findArgs = {};
+  console.log(req.body);
   for (let key in req.body.filters) {
     if (req.body.filters[key].length > 0) {
-      findArgs[key] = req.body.filters[key];
+      if (key === "price") {
+        findArgs[key] = {
+          //Greater than equal
+          $gte: req.body.filters[key][0],
+          //less than equal
+          $lte: req.body.filters[key][1],
+        };
+      } else {
+        findArgs[key] = req.body.filters[key];
+      }
     }
   }
 
