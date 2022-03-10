@@ -7,6 +7,7 @@ import ImageSlider from "../../utils/ImageSlider";
 import CheckBox from "./Sections/CheckBox";
 import { category, price } from "./Sections/Data";
 import RadioBox from "./Sections/RadioBox";
+import SearchFeature from "./Sections/SearchFeature";
 
 function LandingPage() {
   const [Product, setProduct] = useState([]);
@@ -17,6 +18,7 @@ function LandingPage() {
     category: [],
     price: [],
   });
+  const [SearchTerm, setSearchTerm] = useState("");
   useEffect(() => {
     let body = {
       skip: Skip,
@@ -96,6 +98,18 @@ function LandingPage() {
     setFilters(newFilters);
   };
 
+  const updateSearchTerm = (newSearchTerm) => {
+    let body = {
+      skip: 0,
+      limit: Limit,
+      filters: Filters,
+      searchTerm: newSearchTerm,
+    };
+    setSkip(0);
+    setSearchTerm(newSearchTerm);
+    getProducts(body);
+  };
+
   return (
     <div
       style={{
@@ -108,6 +122,7 @@ function LandingPage() {
       <div style={{ textAlign: "center" }}>
         <h2>상품 리스트</h2>
       </div>
+
       {/* {Filter} */}
 
       <Row gutter={[16, 16]}>
@@ -128,6 +143,14 @@ function LandingPage() {
       </Row>
 
       {/* {Search} */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+        }}
+      >
+        <SearchFeature refreshFunction={updateSearchTerm} />
+      </div>
       {/* {Card} */}
       <Row gutter={[16, 16]}>{renderCards}</Row>
       {PostSize >= Limit && (

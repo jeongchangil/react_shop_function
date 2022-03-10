@@ -10,6 +10,7 @@ const productSchema = mongoose.Schema({
   },
   title: {
     type: String,
+    maxlength: 50,
   },
   description: {
     type: String,
@@ -36,6 +37,20 @@ const productSchema = mongoose.Schema({
     default: 0,
   },
 });
+
+productSchema.index(
+  {
+    title: "text",
+    description: "text",
+  },
+  {
+    weights: {
+      title: 5,
+      description: 1,
+    },
+  }
+);
+
 const Product = mongoose.model("Product", productSchema);
 
 module.exports = { Product };
