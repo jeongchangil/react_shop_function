@@ -14,11 +14,10 @@ const storage = multer.diskStorage({
     cb(null, `${Date.now()}_${file.originalname}`);
   },
 });
-
 const upload = multer({ storage: storage }).single("file");
 
+// 가져온 이미지 저장
 router.post("/image", (req, res) => {
-  //가져온 이미지 저장
   upload(req, res, (err) => {
     if (err) {
       return req.json({ success: false, err });
@@ -31,8 +30,8 @@ router.post("/image", (req, res) => {
   });
 });
 
+//받아온 정보 데이터베이스에 저장
 router.post("/", (req, res) => {
-  //받아온 정보 데이터베이스에 저장
   const product = new Product(req.body);
   product.save((err) => {
     if (err) return res.status(400).json({ success: false, err });
@@ -40,9 +39,8 @@ router.post("/", (req, res) => {
   });
 });
 
+// products collection에 들어 있는 상품 가져오기
 router.post("/products", (req, res) => {
-  //products collection에 들어 있는 모든 상품 가져오기
-
   let limit = req.body.limit ? parseInt(req.body.limit) : 20;
   let skip = req.body.skip ? parseInt(req.body.skip) : 0;
   let term = req.body.searchTerm;
@@ -89,6 +87,19 @@ router.post("/products", (req, res) => {
           .json({ success: true, productInfo, postSize: productInfo.length });
       });
   }
+});
+
+// 상품 상세정보를 가져오기 위해 id 받기
+router.get("/products_by_id", (req, res) => {
+  let type = req.query.type;
+  let productId = req.query.id;
+  console.log("product: ", productId);
+  Product.find({ _id: productId })
+    .populate("writer")
+    .exec((err, product) => {
+      if (err) return res.status(400).send(err);
+      return res.status(200).send({ success: true, product });
+    });
 });
 
 module.exports = router;

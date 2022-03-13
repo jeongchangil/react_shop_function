@@ -27,15 +27,15 @@ function CheckBox(props) {
             onChange={() => handleToggle(value._id)}
             checked={Checked.indexOf(value._id) === -1 ? false : true}
           />
-          <span>{value.name}</span>
+          <span>{value.name} </span>
         </React.Fragment>
       ))
     );
   };
   return (
     <div>
-      <Collapse defaultActiveKey={["1"]}>
-        <Panel header="This is panel header 1" key="1">
+      <Collapse defaultActiveKey={["0"]}>
+        <Panel header="카테고리" key="1">
           {checkBoxList()}
         </Panel>
       </Collapse>
