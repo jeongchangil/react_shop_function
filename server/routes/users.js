@@ -21,6 +21,7 @@ router.get("/auth", auth, (req, res) => {
   });
 });
 
+//회원가입
 router.post("/register", (req, res) => {
   const user = new User(req.body);
 
@@ -32,6 +33,7 @@ router.post("/register", (req, res) => {
   });
 });
 
+// 로그인
 router.post("/login", (req, res) => {
   User.findOne({ email: req.body.email }, (err, user) => {
     if (!user)
@@ -56,6 +58,7 @@ router.post("/login", (req, res) => {
   });
 });
 
+// 로그아웃
 router.get("/logout", auth, (req, res) => {
   User.findOneAndUpdate(
     { _id: req.user._id },
@@ -67,6 +70,52 @@ router.get("/logout", auth, (req, res) => {
       });
     }
   );
+});
+
+router.post("/addToCart", auth, (req, res) => {
+  let duplicate = false;
+
+  // user collection에 해당 유저의 정보를 가져오기
+  User.findOne({ _id: req.user._id }, (err, userInfo) => {
+    userInfo.cart.forEach((item) => {
+      if (item.id === req.body.productId) {
+        duplicate = true;
+      }
+    });
+
+    // 상품이 있을 때
+    if (duplicate) {
+      User.findOnneAndUpdate(
+        { _id: req.user._id, "cart.id": req.body.productId },
+        { $inc: { "cart.$.quantity": 1 } },
+        { new: true },
+        (err, userInfo) => {
+          if (err) return res.status(200).json({ success: false, err });
+          res.status(200).send(userInfo.cart);
+        }
+      );
+    }
+    //상품이 없을 때
+    else {
+      User.findOneAndUpdate(
+        { _id: req.user._id },
+        {
+          $push: {
+            cart: {
+              id: req.body.productId,
+              quantity: 1,
+              date: Date.now(),
+            },
+          },
+        },
+        { new: true },
+        (err, userInfo) => {
+          if (err) return res.status(400).json({ success: false, err });
+          res.status(300).send(userInfo.cart);
+        }
+      );
+    }
+  });
 });
 
 module.exports = router;
