@@ -92,13 +92,19 @@ router.post("/products", (req, res) => {
 // 상품 상세정보를 가져오기 위해 id 받기
 router.get("/products_by_id", (req, res) => {
   let type = req.query.type;
-  let productId = req.query.id;
-  console.log("product: ", productId);
-  Product.find({ _id: productId })
+  let productIds = req.query.id;
+
+  if (type === "array") {
+    let ids = req.query.id.split(",");
+    productIds = ids.map((item) => item);
+  }
+
+  console.log("product: ", productIds);
+  Product.find({ _id: { $in: productIds } })
     .populate("writer")
     .exec((err, product) => {
       if (err) return res.status(400).send(err);
-      return res.status(200).send({ success: true, product });
+      return res.status(200).send(product);
     });
 });
 

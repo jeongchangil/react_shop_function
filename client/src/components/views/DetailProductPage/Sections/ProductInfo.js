@@ -7,7 +7,8 @@ function ProductInfo(props) {
   const dispatch = useDispatch();
   // 필요한 정보를 카트에 넣어준다. (상품 아이디, 갯수, )
   const clickHandler = () => {
-    dispatch(addToCart(props.detail.id));
+    console.log("ProductInfo : ", props.detail._id);
+    dispatch(addToCart(props.detail._id));
   };
 
   return (
