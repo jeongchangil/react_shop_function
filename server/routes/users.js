@@ -87,7 +87,7 @@ router.post("/addToCart", auth, (req, res) => {
 
     // 상품이 있을 때
     if (duplicate) {
-      User.findOnneAndUpdate(
+      User.findOneAndUpdate(
         { _id: req.user._id, "cart.id": req.body.productId },
         { $inc: { "cart.$.quantity": 1 } },
         { new: true },

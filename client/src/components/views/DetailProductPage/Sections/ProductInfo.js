@@ -9,6 +9,7 @@ function ProductInfo(props) {
   const clickHandler = () => {
     console.log("ProductInfo : ", props.detail._id);
     dispatch(addToCart(props.detail._id));
+    console.log("addToCart Test : ", props.detail);
   };
 
   return (
